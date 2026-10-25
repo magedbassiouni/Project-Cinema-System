@@ -1,0 +1,27 @@
+﻿@model Project_Cinema_System.Models.Cinema
+
+@{
+    ViewData["Title"] = "Delete Cinema";
+}
+
+<h1>Delete Cinema</h1>
+
+<h4>Are you sure you want to delete this cinema?</h4>
+
+<div class="mb-3">
+    <p><strong>Name:</strong> @Model.Name</p>
+    <p><strong>Address:</strong> @Model.Address</p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Img))
+    {
+        <img src="@Model.Img" alt="@Model.Name"
+             style="width:150px;" />
+    }
+</div>
+
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

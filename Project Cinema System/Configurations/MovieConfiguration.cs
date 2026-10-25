@@ -22,6 +22,15 @@ namespace Project_Cinema_System.Configurations
             builder.Property(m => m.Status)
                 .IsRequired()
                 .HasMaxLength(50);
+            builder.Property(m => m.Price)
+                .HasPrecision(10, 2);
+
+            builder.Property(m => m.DateTime);
+
+            builder.HasOne(m => m.Cinema)
+                .WithMany()
+                .HasForeignKey(m => m.CinemaId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(m => m.MainImg)
                 .HasMaxLength(500);

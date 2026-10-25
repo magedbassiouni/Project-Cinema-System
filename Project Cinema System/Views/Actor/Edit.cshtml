@@ -1,0 +1,32 @@
+﻿@model Project_Cinema_System.Models.Actor
+
+@{
+    ViewData["Title"] = "Edit Actor";
+}
+
+<h1>Edit Actor</h1>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Img" class="form-label">Image URL</label>
+        <input asp-for="Img" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Biography" class="form-label"></label>
+        <textarea asp-for="Biography" class="form-control" rows="4"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
