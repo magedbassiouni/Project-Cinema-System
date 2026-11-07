@@ -7,7 +7,7 @@ using Project_Cinema_System.Models;
 using Project_Cinema_System.Repositories;
 using System;
 using System.Threading.Tasks;
-
+using Project_Cinema_System.Services;
 namespace Project_Cinema_System
 {
     public class Program
@@ -26,17 +26,21 @@ namespace Project_Cinema_System
                         "DefaultConnection")));
 
             // 3. Register Identity
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = true;
+
+            })
+                 .AddEntityFrameworkStores<AppDbContext>()
+                 .AddDefaultTokenProviders();
 
             // 4. Register Generic Repository
             builder.Services.AddScoped(
                 typeof(IGenericRepository<>),
                 typeof(GenericRepository<>));
 
+            builder.Services.AddScoped<IEmailService, EmailService>();
             var app = builder.Build();
-
             // 5. Create Roles if they do not exist
             using (var scope = app.Services.CreateScope())
             {

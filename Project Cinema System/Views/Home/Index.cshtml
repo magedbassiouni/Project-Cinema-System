@@ -1,58 +1,46 @@
-﻿@{
-    ViewData["Title"] = "Dashboard";
-}
+﻿
+<div class="dashboard">
 
-<div class="container mt-4">
-    <h1 class="mb-2">Cinema Dashboard</h1>
-    <p class="text-muted mb-4">
-        Welcome to the Cinema Management System
-    </p>
+    <header class="topbar">
+        <h1>Cinema Dashboard</h1>
+        <p>Manage your cinema system</p>
+    </header>
 
-    <div class="row g-4">
+    <aside class="sidebar">
+        <nav>
+            <a href="#">Dashboard</a>
+            <a href="#">Movies</a>
+            <a href="#">Cinemas</a>
+            <a href="#">Actors</a>
+            <a href="#">Categories</a>
+        </nav>
+    </aside>
 
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h4>Categories</h4>
-                    <p>Manage movie categories.</p>
-                    <a asp-controller="Category" asp-action="Index"
-                       class="btn btn-primary">Manage Categories</a>
-                </div>
-            </div>
-        </div>
+    <main class="main-content">
 
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h4>Cinemas</h4>
-                    <p>Manage cinema information.</p>
-                    <a asp-controller="Cinema" asp-action="Index"
-                       class="btn btn-primary">Manage Cinemas</a>
-                </div>
-            </div>
-        </div>
+        <section class="stats">
+            <h2>Overview</h2>
 
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h4>Movies</h4>
-                    <p>Manage movies and their details.</p>
-                    <a asp-controller="Movie" asp-action="Index"
-                       class="btn btn-primary">Manage Movies</a>
-                </div>
-            </div>
-        </div>
+            <article class="stat-card">
+                <h3>Upcoming Shows</h3>
+                <p>0</p>
+            </article>
 
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h4>Actors</h4>
-                    <p>Manage actors and their information.</p>
-                    <a asp-controller="Actor" asp-action="Index"
-                       class="btn btn-primary">Manage Actors</a>
-                </div>
-            </div>
-        </div>
+            <article class="stat-card">
+                <h3>Total Bookings</h3>
+                <p>0</p>
+            </article>
 
-    </div>
+            <article class="stat-card">
+                <h3>Available Movies</h3>
+                <p>0</p>
+            </article>
+        </section>
+
+        <section class="upcoming-shows">
+            <h2>Upcoming Shows</h2>
+            <p>No upcoming shows available.</p>
+        </section>
+
+    </main>
 </div>
