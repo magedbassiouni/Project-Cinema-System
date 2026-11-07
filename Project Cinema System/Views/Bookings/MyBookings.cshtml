@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Project_Cinema_System.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">My Bookings</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You haven't made any bookings yet.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Movie</th>
+                        <th>Cinema</th>
+                        <th>Showtime</th>
+                        <th>Tickets</th>
+                        <th>Total</th>
+                        <th>Discount</th>
+                        <th>Final Amount</th>
+                        <th>Status</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var booking in Model)
+                    {
+                        var total = booking.UnitPrice * booking.Quantity;
+                        var finalAmount = total - booking.DiscountAmount;
+
+                        <tr>
+                            <td>@booking.Showtime.Movie.Name</td>
+                            <td>@booking.Showtime.Cinema.Name</td>
+                            <td>
+                                @booking.Showtime.DateTime.ToString("dd/MM/yyyy hh:mm tt")
+                            </td>
+                            <td>@booking.Quantity</td>
+                            <td>@total.ToString("0.00") EGP</td>
+                            <td>@booking.DiscountAmount.ToString("0.00") EGP</td>
+                            <td>@finalAmount.ToString("0.00") EGP</td>
+                            <td>@booking.Status</td>
+                            <td>
+                                <a asp-action="Details"
+                                   asp-route-id="@booking.Id"
+                                   class="btn btn-primary btn-sm">
+                                    Details
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

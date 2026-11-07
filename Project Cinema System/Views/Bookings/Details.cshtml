@@ -1,0 +1,58 @@
+﻿@model Project_Cinema_System.Models.Booking
+
+@{
+    ViewData["Title"] = "Booking Confirmation";
+    var total = Model.UnitPrice * Model.Quantity;
+    var finalAmount = total - Model.DiscountAmount;
+}
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <div class="text-center mb-4">
+            <h2 class="text-success">Booking Confirmed!</h2>
+            <p>Your booking has been completed successfully.</p>
+        </div>
+
+        <hr />
+
+        <h5>Booking Information</h5>
+
+        <p><strong>Booking ID:</strong> @Model.Id</p>
+        <p><strong>Movie:</strong> @Model.Showtime.Movie.Name</p>
+        <p><strong>Cinema:</strong> @Model.Showtime.Cinema.Name</p>
+        <p>
+            <strong>Showtime:</strong>
+            @Model.Showtime.DateTime.ToString("dd/MM/yyyy hh:mm tt")
+        </p>
+        <p><strong>Tickets:</strong> @Model.Quantity</p>
+        <p><strong>Ticket Price:</strong> @Model.UnitPrice.ToString("0.00") EGP</p>
+
+        <hr />
+
+        <h5>Payment Summary</h5>
+
+        <p>
+            <strong>Subtotal:</strong>
+            @total.ToString("0.00") EGP
+        </p>
+
+        <p>
+            <strong>Discount:</strong>
+            @Model.DiscountAmount.ToString("0.00") EGP
+        </p>
+
+        <h4 class="text-success">
+            Final Total: @finalAmount.ToString("0.00") EGP
+        </h4>
+
+        <p>
+            <strong>Status:</strong> @Model.Status
+        </p>
+
+        <a asp-controller="Showtimes"
+           asp-action="Index"
+           class="btn btn-primary mt-3">
+            Browse Showtimes
+        </a>
+    </div>
+</div>

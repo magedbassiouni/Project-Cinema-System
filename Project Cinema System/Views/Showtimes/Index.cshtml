@@ -1,0 +1,75 @@
+﻿@model List<Project_Cinema_System.ViewModels.ShowtimeListItem>
+
+@{
+    ViewData["Title"] = "Showtimes";
+}
+
+<div class="container my-4">
+    <h2 class="mb-4">Showtimes</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No upcoming showtimes right now.</div>
+    }
+    else
+    {
+        @foreach (var day in Model.GroupBy(s => s.DateTime.Date))
+        {
+            <h5 class="mt-4 mb-3">@day.Key.ToString("dddd, dd MMM yyyy")</h5>
+
+            <div class="row g-3">
+                @foreach (var s in day)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="border rounded p-3 h-100 d-flex flex-column">
+                            <h5 class="mb-2">
+                                <a asp-controller="Movie" asp-action="Details" asp-route-id="@s.MovieId"
+                                   class="text-decoration-none">@s.MovieName</a>
+                            </h5>
+
+                            <div class="opacity-75">@s.CinemaName</div>
+                            <div>@s.DateTime.ToString("hh:mm tt")</div>
+                            <div class="fw-semibold mb-1">@s.Price.ToString("N2") EGP</div>
+
+                            <div class="small mb-3 @(s.IsSoldOut ? "text-danger" : "opacity-75")">
+                                @(s.IsSoldOut ? "Sold out" : $"{s.AvailableTickets} tickets left")
+                            </div>
+
+                            <div class="mt-auto">
+                                @if (s.IsSoldOut)
+                                {
+                                    <button type="button" class="btn btn-secondary btn-sm w-100" disabled>Sold out</button>
+                                }
+                                else if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex gap-2">
+                                        <input type="hidden" name="showtimeId" value="@s.Id" />
+                                        <input type="number" name="quantity" value="1" min="1"
+                                               max="@Math.Min(10, s.AvailableTickets)"
+                                               class="form-control form-control-sm" style="width:70px" />
+                                        <button type="submit" class="btn btn-primary btn-sm flex-grow-1">Add to cart</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Account" asp-action="Login"
+                                       asp-route-returnUrl="@Context.Request.Path"
+                                       class="btn btn-outline-secondary btn-sm w-100">Login to book</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>

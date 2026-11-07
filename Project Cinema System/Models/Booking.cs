@@ -1,4 +1,5 @@
-﻿namespace Project_Cinema_System.Models
+﻿
+namespace Project_Cinema_System.Models
 {
     public class Booking
     {
@@ -19,5 +20,11 @@
         public decimal UnitPrice { get; set; }
 
         public string Status { get; set; } = string.Empty;
+
+        public int? PromotionId { get; set; }
+
+        public Promotion? Promotion { get; set; }
+
+        public decimal DiscountAmount { get; set; }
     }
 }

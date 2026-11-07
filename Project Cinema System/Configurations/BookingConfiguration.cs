@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Project_Cinema_System.Models;
 
@@ -26,6 +27,10 @@ namespace Project_Cinema_System.Configurations
                 .IsRequired()
                 .HasMaxLength(50);
 
+            builder.Property(b => b.DiscountAmount)
+                .HasPrecision(10, 2)
+                .HasDefaultValue(0);
+
             builder.HasOne(b => b.User)
                 .WithMany(u => u.Bookings)
                 .HasForeignKey(b => b.UserId)
@@ -35,6 +40,11 @@ namespace Project_Cinema_System.Configurations
                 .WithMany(s => s.Bookings)
                 .HasForeignKey(b => b.ShowtimeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(b => b.Promotion)
+                .WithMany()
+                .HasForeignKey(b => b.PromotionId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

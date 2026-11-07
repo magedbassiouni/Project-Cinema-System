@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Project_Cinema_System.Models.Booking>
+
+@{
+    ViewData["Title"] = "Bookings Management";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Bookings Management</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No bookings found.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>User</th>
+                        <th>Movie</th>
+                        <th>Cinema</th>
+                        <th>Showtime</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Discount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.User.FullName</td>
+                            <td>@item.Showtime.Movie.Name</td>
+                            <td>@item.Showtime.Cinema.Name</td>
+                            <td>
+                                @item.Showtime.DateTime.ToString("dd/MM/yyyy hh:mm tt")
+                            </td>
+                            <td>@item.Quantity</td>
+                            <td>
+                                @((item.UnitPrice * item.Quantity).ToString("0.00")) EGP
+                            </td>
+                            <td>@item.DiscountAmount.ToString("0.00") EGP</td>
+                            <td>@item.Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

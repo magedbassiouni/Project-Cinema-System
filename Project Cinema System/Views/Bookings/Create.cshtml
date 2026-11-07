@@ -1,0 +1,107 @@
+﻿
+@model Project_Cinema_System.ViewModels.BookingViewModel
+
+@{
+    ViewData["Title"] = "Book Tickets";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow p-4">
+                <h2 class="mb-4">Book Your Tickets</h2>
+
+                <div class="alert alert-light border">
+                    <h5>@Model.MovieName</h5>
+                    <p class="mb-1">
+                        <strong>Cinema:</strong> @Model.CinemaName
+                    </p>
+                    <p class="mb-1">
+                        <strong>Date:</strong>
+                        @Model.ShowtimeDate.ToString("dd/MM/yyyy hh:mm tt")
+                    </p>
+                    <p class="mb-0">
+                        <strong>Ticket Price:</strong>
+                        @Model.UnitPrice.ToString("0.00") EGP
+                    </p>
+                </div>
+
+                <form asp-action="Create" method="post">
+                    <input asp-for="ShowtimeId" type="hidden" />
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Quantity"
+                               class="form-label">Number of Tickets</label>
+                        <input asp-for="Quantity"
+                               type="number"
+                               min="1"
+                               max="10"
+                               class="form-control" />
+                        <span asp-validation-for="Quantity"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PromotionCode"
+                               class="form-label">Promotion Code</label>
+                        <input asp-for="PromotionCode"
+                               class="form-control"
+                               placeholder="Enter coupon code (optional)" />
+                        <span asp-validation-for="PromotionCode"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong>Booking total:</strong>
+                        @Model.UnitPrice.ToString("0.00") EGP ×
+                        <span id="quantity">@Model.Quantity</span>
+                        = <strong id="totalAmount">
+                        @Model.TotalAmount.ToString("0.00")
+                    </strong> EGP
+
+                    <p class="small mb-0 mt-2">
+                        Any valid promotion discount will be calculated
+                        when you confirm your booking.
+                    </p>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    Confirm Booking
+                </button>
+
+                <a asp-controller="Showtimes"
+                   asp-action="Index"
+                   class="btn btn-secondary w-100 mt-2">
+                    Back to Showtimes
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const quantityInput = document.getElementById("Quantity");
+        const quantityLabel = document.getElementById("quantity");
+        const totalLabel = document.getElementById("totalAmount");
+        const unitPrice = @Model.UnitPrice.ToString(
+                                    System.Globalization.CultureInfo.InvariantCulture);
+
+        function updateTotal() {
+            let quantity = parseInt(quantityInput.value) || 0;
+
+            quantityLabel.textContent = quantity;
+            totalLabel.textContent =
+                (unitPrice * quantity).toFixed(2);
+        }
+
+        quantityInput.addEventListener("input", updateTotal);
+        updateTotal();
+    </script>
+}

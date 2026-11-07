@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Project_Cinema_System.ViewModels.Admin.UserManagementViewModel>
+
+@{
+    ViewData["Title"] = "Manage Users";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Manage Users</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.FullName</td>
+                    <td>@user.Email</td>
+
+                    <td>
+                        @if (user.IsLocked)
+                        {
+                            <span class="badge bg-danger">Locked</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (user.IsLocked)
+                        {
+                            <form asp-area="Admin"
+                                  asp-controller="Users"
+                                  asp-action="Unlock"
+                                  asp-route-id="@user.Id"
+                                  method="post">
+
+                                <button type="submit"
+                                        class="btn btn-success btn-sm">
+                                    Unlock
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-area="Admin"
+                                  asp-controller="Users"
+                                  asp-action="Lock"
+                                  asp-route-id="@user.Id"
+                                  method="post">
+
+                                <button type="submit"
+                                        class="btn btn-danger btn-sm">
+                                    Lock
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

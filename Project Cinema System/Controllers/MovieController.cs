@@ -1,9 +1,9 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project_Cinema_System.Data;
 using Project_Cinema_System.Models;
+using Project_Cinema_System.ViewModels;
 
 namespace Project_Cinema_System.Controllers
 {
@@ -35,13 +35,38 @@ namespace Project_Cinema_System.Controllers
 
             var movie = await _context.Movies
                 .Include(m => m.Category)
+                .Include(m => m.Cinema)
+                .Include(m => m.MovieActors).ThenInclude(ma => ma.Actor)
+                .Include(m => m.MovieImages)
+                .Include(m => m.Showtimes).ThenInclude(s => s.Cinema)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (movie == null)
                 return NotFound();
 
-            return View(movie);
+            var model = new MovieDetailsViewModel
+            {
+                Id = movie.Id,
+                Name = movie.Name,
+                Description = movie.Description,
+                CategoryName = movie.Category?.Name,
+                CinemaName = movie.Cinema?.Name,
+                ActorNames = movie.MovieActors.Select(ma => ma.Actor.Name).ToList(),
+                ImageUrls = movie.MovieImages.Select(i => i.ImageUrl).ToList(),
+                Showtimes = movie.Showtimes
+                    .Where(s => s.DateTime > DateTime.Now && s.Status == "Scheduled")
+                    .OrderBy(s => s.DateTime)
+                    .Select(s => new ShowtimeItem
+                    {
+                        Id = s.Id,
+                        DateTime = s.DateTime,
+                        Price = s.Price,
+                        CinemaName = s.Cinema.Name
+                    }).ToList()
+            };
+
+            return View(model);
         }
 
         // GET: Movie/Create
@@ -70,12 +95,6 @@ namespace Project_Cinema_System.Controllers
             {
                 ModelState.AddModelError(
                     nameof(movie.CategoryId), "Select a valid category.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                await LoadCategoriesAsync(movie.CategoryId);
-                return View(movie);
             }
 
             if (movie.Price < 0)
@@ -118,7 +137,7 @@ namespace Project_Cinema_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,Name,Description,Status,MainImg,CategoryId")]
+            [Bind("Id,Name,Description,Status,MainImg,CategoryId,CinemaId,Price,DateTime")]
             Movie input)
         {
             if (id != input.Id)
@@ -214,7 +233,6 @@ namespace Project_Cinema_System.Controllers
             }
         }
 
-
         private async Task LoadCategoriesAsync(
             int? selectedCategoryId = null,
             int? selectedCinemaId = null)
@@ -233,6 +251,5 @@ namespace Project_Cinema_System.Controllers
             ViewBag.CinemaId = new SelectList(
                 cinemas, "Id", "Name", selectedCinemaId);
         }
-
     }
 }

@@ -261,6 +261,15 @@ namespace Project_Cinema_System.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("DiscountAmount")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<int?>("PromotionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -281,6 +290,8 @@ namespace Project_Cinema_System.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PromotionId");
 
                     b.HasIndex("ShowtimeId");
 
@@ -428,6 +439,87 @@ namespace Project_Cinema_System.Migrations
                     b.ToTable("MovieImage", (string)null);
                 });
 
+            modelBuilder.Entity("Project_Cinema_System.Models.Promotion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("DiscountPercentage")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("MaxUsage")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UsageCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Promotions", (string)null);
+                });
+
+            modelBuilder.Entity("Project_Cinema_System.Models.PromotionUsage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("PromotionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UsedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId")
+                        .IsUnique();
+
+                    b.HasIndex("PromotionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PromotionUsages", (string)null);
+                });
+
             modelBuilder.Entity("Project_Cinema_System.Models.Showtime", b =>
                 {
                     b.Property<int>("Id")
@@ -519,6 +611,11 @@ namespace Project_Cinema_System.Migrations
 
             modelBuilder.Entity("Project_Cinema_System.Models.Booking", b =>
                 {
+                    b.HasOne("Project_Cinema_System.Models.Promotion", "Promotion")
+                        .WithMany()
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Project_Cinema_System.Models.Showtime", "Showtime")
                         .WithMany("Bookings")
                         .HasForeignKey("ShowtimeId")
@@ -530,6 +627,8 @@ namespace Project_Cinema_System.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Promotion");
 
                     b.Navigation("Showtime");
 
@@ -585,6 +684,33 @@ namespace Project_Cinema_System.Migrations
                     b.Navigation("Movie");
                 });
 
+            modelBuilder.Entity("Project_Cinema_System.Models.PromotionUsage", b =>
+                {
+                    b.HasOne("Project_Cinema_System.Models.Booking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Project_Cinema_System.Models.Promotion", "Promotion")
+                        .WithMany("PromotionUsages")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Project_Cinema_System.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Promotion");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Project_Cinema_System.Models.Showtime", b =>
                 {
                     b.HasOne("Project_Cinema_System.Models.Cinema", "Cinema")
@@ -631,6 +757,11 @@ namespace Project_Cinema_System.Migrations
                     b.Navigation("MovieImages");
 
                     b.Navigation("Showtimes");
+                });
+
+            modelBuilder.Entity("Project_Cinema_System.Models.Promotion", b =>
+                {
+                    b.Navigation("PromotionUsages");
                 });
 
             modelBuilder.Entity("Project_Cinema_System.Models.Showtime", b =>

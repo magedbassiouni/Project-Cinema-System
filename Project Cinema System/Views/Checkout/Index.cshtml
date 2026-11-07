@@ -1,0 +1,213 @@
+﻿@model Project_Cinema_System.ViewModels.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<style>
+    .pay-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        border: 1px solid rgba(128, 128, 128, 0.35);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: border-color .15s, background-color .15s;
+    }
+
+        .pay-option:hover {
+            border-color: #0d6efd;
+        }
+
+        .pay-option:has(input:checked) {
+            border-color: #0d6efd;
+            background-color: rgba(13, 110, 253, 0.12);
+        }
+
+        .pay-option .pay-title {
+            font-weight: 600;
+        }
+
+        .pay-option .pay-sub {
+            font-size: .85rem;
+            opacity: .7;
+        }
+
+    .summary-card {
+        border: 1px solid rgba(128, 128, 128, 0.35);
+        border-radius: 16px;
+        padding: 20px;
+    }
+
+    .summary-item {
+        padding: 10px 0;
+        border-bottom: 1px dashed rgba(128, 128, 128, 0.35);
+    }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+    .total-row {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .card-panel {
+        border: 1px solid rgba(128, 128, 128, 0.35);
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 12px;
+    }
+</style>
+
+<div class="container my-4">
+    <h2 class="mb-4">Checkout</h2>
+
+    <form asp-action="Index" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <div class="row g-4">
+
+            <!-- Left: payment -->
+            <div class="col-lg-7">
+
+                <h5 class="mb-3">1. Promotion code</h5>
+                <div class="mb-4">
+                    <input asp-for="PromotionCode" class="form-control form-control-lg"
+                           placeholder="Enter your code (optional)" autocomplete="off" />
+                    <span asp-validation-for="PromotionCode" class="text-danger"></span>
+                </div>
+
+                <h5 class="mb-3">2. Payment method</h5>
+
+                <div class="d-grid gap-2">
+                    <label class="pay-option" for="pmOnline">
+                        <input class="form-check-input mt-0" type="radio" name="PaymentMethod"
+                               id="pmOnline" value="Online" checked="@(Model.PaymentMethod == "Online")" />
+                        <div>
+                            <div class="pay-title">Pay online</div>
+                            <div class="pay-sub">Pay now by card and get instant confirmation</div>
+                        </div>
+                    </label>
+
+                    <label class="pay-option" for="pmCash">
+                        <input class="form-check-input mt-0" type="radio" name="PaymentMethod"
+                               id="pmCash" value="Cash" checked="@(Model.PaymentMethod == "Cash")" />
+                        <div>
+                            <div class="pay-title">Pay cash at the cinema</div>
+                            <div class="pay-sub">Reserve your seats now and pay at the box office</div>
+                        </div>
+                    </label>
+                </div>
+                <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+
+                <!-- Display only: these fields have no name, so nothing is sent to the server -->
+                <div id="cardPanel" class="card-panel">
+                    <div class="alert alert-warning py-2 small mb-3">
+                        Test mode: no real payment is made. Do not enter a real card.
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="cardNumber">Card number</label>
+                        <input type="text" id="cardNumber" class="form-control"
+                               placeholder="1234 5678 9012 3456" inputmode="numeric" autocomplete="off" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="cardName">Name on card</label>
+                        <input type="text" id="cardName" class="form-control"
+                               placeholder="Full name" autocomplete="off" />
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label" for="cardExpiry">Expiry</label>
+                            <input type="text" id="cardExpiry" class="form-control"
+                                   placeholder="MM/YY" inputmode="numeric" autocomplete="off" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="cardCvv">CVV</label>
+                            <input type="password" id="cardCvv" class="form-control"
+                                   placeholder="***" maxlength="4" inputmode="numeric" autocomplete="off" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: order summary -->
+            <div class="col-lg-5">
+                <div class="summary-card">
+                    <h5 class="mb-3">Order summary</h5>
+
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="summary-item">
+                            <div class="d-flex justify-content-between">
+                                <strong>@item.MovieName</strong>
+                                <span>@item.LineTotal.ToString("N2") EGP</span>
+                            </div>
+                            <div class="small opacity-75">
+                                @item.CinemaName &bull; @item.ShowtimeDate.ToString("dd MMM yyyy, hh:mm tt")
+                            </div>
+                            <div class="small opacity-75">
+                                @item.Quantity x @item.UnitPrice.ToString("N2") EGP
+                            </div>
+                        </div>
+                    }
+
+                    <hr />
+
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Subtotal</span>
+                        <span>@Model.Total.ToString("N2") EGP</span>
+                    </div>
+                    <div class="d-flex justify-content-between small opacity-75 mb-3">
+                        <span>Promotion discount</span>
+                        <span>Applied when you confirm</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between total-row mb-3">
+                        <span>Total</span>
+                        <span>@Model.Total.ToString("N2") EGP</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100">Confirm order</button>
+                    <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Back to cart</a>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var online = document.getElementById('pmOnline');
+            var cash = document.getElementById('pmCash');
+            var panel = document.getElementById('cardPanel');
+
+            function toggle() {
+                panel.style.display = online.checked ? 'block' : 'none';
+            }
+
+            online.addEventListener('change', toggle);
+            cash.addEventListener('change', toggle);
+            toggle();
+
+            var num = document.getElementById('cardNumber');
+            num.addEventListener('input', function () {
+                var v = num.value.replace(/\D/g, '').substring(0, 16);
+                num.value = v.replace(/(.{4})/g, '$1 ').trim();
+            });
+
+            var exp = document.getElementById('cardExpiry');
+            exp.addEventListener('input', function () {
+                var v = exp.value.replace(/\D/g, '').substring(0, 4);
+                exp.value = v.length > 2 ? v.substring(0, 2) + '/' + v.substring(2) : v;
+            });
+        })();
+    </script>
+}

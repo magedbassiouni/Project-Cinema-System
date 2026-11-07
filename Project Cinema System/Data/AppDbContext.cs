@@ -29,7 +29,11 @@ namespace Project_Cinema_System.Data
         public DbSet<Showtime> Showtimes { get; set; } = null!;
 
         public DbSet<Booking> Bookings { get; set; } = null!;
-
+        public DbSet<Promotion> Promotions { get; set; } = null!;
+        public DbSet<PromotionUsage> PromotionUsages { get; set; } = null!;
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Payment> Payments { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -42,6 +46,8 @@ namespace Project_Cinema_System.Data
             builder.ApplyConfiguration(new MovieConfiguration());
             builder.ApplyConfiguration(new ShowtimeConfiguration());
             builder.ApplyConfiguration(new BookingConfiguration());
+            builder.ApplyConfiguration(new PromotionConfiguration());
+            builder.ApplyConfiguration(new PromotionUsageConfiguration());
         }
     }
 }
