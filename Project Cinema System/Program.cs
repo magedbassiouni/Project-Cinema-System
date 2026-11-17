@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Project_Cinema_System.Data;
@@ -38,10 +37,11 @@ namespace Project_Cinema_System
 
             // 5. Register Email Service
             builder.Services.AddScoped<IEmailService, EmailService>();
-             
-            // 6. Register Promotion Service
+
+            // 6. Register Promotion and Cart Services
             builder.Services.AddScoped<PromotionService>();
             builder.Services.AddScoped<CartService>();
+
             var app = builder.Build();
 
             // 7. Initialize Database (Roles + Super Admin)

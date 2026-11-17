@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Project_Cinema_System.Models;
@@ -16,6 +15,7 @@ namespace Project_Cinema_System.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
+
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -25,6 +25,7 @@ namespace Project_Cinema_System.Controllers
             _signInManager = signInManager;
             _emailService = emailService;
         }
+
         // Register - GET
         [HttpGet]
         [AllowAnonymous]
@@ -71,42 +72,10 @@ namespace Project_Cinema_System.Controllers
                     return View(model);
                 }
 
-                // Generate Email Confirmation Token
-                var token = await _userManager
-                    .GenerateEmailConfirmationTokenAsync(user);
-
-                // Encode Token for URL
-                var encodedToken = WebEncoders.Base64UrlEncode(
-                    Encoding.UTF8.GetBytes(token));
-
-                // Generate Confirmation Link
-                var confirmationLink = Url.Action(
-                    "ConfirmEmail",
-                    "Account",
-                    new { userId = user.Id, token = encodedToken },
-                    protocol: Request.Scheme
-                );
-
-                // 5. Prepare Email Body
-                var emailBody = $"""
-            <h2>Welcome to Cinema System</h2>
-            <p>Please confirm your email by clicking the link below:</p>
-            <a href="{HtmlEncoder.Default.Encode(confirmationLink)}">
-                Confirm Email
-            </a>
-            """;
-
-                // 6. Send Confirmation Email
-                // Temporary: Skip Email Confirmation
-
+                // Email confirmation is skipped for now: the account is created
+                // with EmailConfirmed = true, so the user can log in directly.
                 TempData["RegistrationMessage"] =
                     "Account created successfully. You can now login.";
-
-                return RedirectToAction(nameof(Login));
-
-                // 7. Redirect to Login
-                TempData["RegistrationMessage"] =
-                    "Account created successfully. Please check your email to confirm your account.";
 
                 return RedirectToAction(nameof(Login));
             }
